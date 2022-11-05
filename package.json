@@ -1,0 +1,16 @@
+{
+  "name": "r9t-storm",
+  "version": "1.0.0",
+  "description": "Storm alert microservice for the R nineT Scrambler navigation tower.",
+  "main": "app.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "Luis Martins",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mqtt": "^4.3.7",
+    "sqlite3": "^5.1.2"
+  }
+}

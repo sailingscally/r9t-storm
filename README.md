@@ -35,13 +35,11 @@ applications is used. It provides process monitoring capabilities which are grea
 To start the service run:
 
 ```
-pm2 start app.js --name storm --watch --time --ignore-watch="*.db"
+pm2 start app.js --name storm --watch --time --ignore-watch="weather.*" -- --port=3000
 ```
 
-## RESTful API
+## Endpoints
 
-This service provides the following restful APIs:
+This service provides the following restful endpoints:
 
-- TBD
-- TBD
-- TBD
+- `/barograph` - returns the last 24 hours of barometric readings (4 data points/hour)
