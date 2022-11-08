@@ -293,6 +293,6 @@ const barograph = () => {
   });
 }
 
-app.get('/barograph', async (request, response) => {
+app.get('/storm/barograph', async (request, response) => {
   response.json(await barograph());
 });

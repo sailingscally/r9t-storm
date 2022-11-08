@@ -20,7 +20,7 @@ To request barograph data send the message `{ fetch: true }` to the topic `storm
 
 This service provides the following restful endpoints:
 
-- `/barograph` - returns the last 24 hours of barometric readings (4 data points/hour)
+- `/storm/barograph` - returns the last 24 hours of barometric readings (4 data points/hour)
 
 ## Dependencies
 
