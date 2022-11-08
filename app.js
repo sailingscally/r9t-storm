@@ -24,17 +24,12 @@ const { WeatherAlert } = require('r9t-commons');
 const mqtt = require('mqtt');
 const sqlite3 = require('sqlite3');
 const express = require('express');
+const commons = require('r9t-commons');
 
 const db = new sqlite3.Database('./weather.db');
 
-const port = process.argv.filter((arg) => {
-  return arg.indexOf('--port=') == 0;
-}).map((arg) => {
-  return parseInt(arg.match(/\d+/));
-})[0];
-
 const app = express();
-app.listen(port);
+app.listen(commons.arg('port'));
 
 const data = {
   pressure: undefined,
@@ -62,7 +57,7 @@ client.on('connect', () => {
   connected = true;
 
   client.options.reconnectPeriod = 1000;
-  client.subscribe(['weather/pressure', 'weather/temperature']);
+  client.subscribe(['weather/pressure', 'weather/temperature', 'storm/barograph']);
 });
 
 client.on('close', () => {
@@ -72,13 +67,20 @@ client.on('close', () => {
   }
 });
 
-client.on('message', (topic, message) => {
+client.on('message', async (topic, message) => {
   switch(topic) {
     case 'weather/temperature':
       data.temperature = parseFloat(message);
       break;
     case 'weather/pressure':
       data.pressure = parseFloat(message);
+      break;
+    case 'storm/barograph':
+      const json = JSON.parse(message);
+
+      if(json.fetch && connected) {
+        client.publish('weather/barograph', JSON.stringify(await barograph()));
+      }
       break;
   }
 
@@ -288,7 +290,7 @@ const barograph = () => {
       for(let i = 0;  i < excess; i ++) {
         list.shift(); // remove excess samples
       }
-    
+
       resolve(list);
     });
   });
