@@ -85,10 +85,7 @@ client.on('message', async (topic, message) => {
   }
 
   if(data.pressure != undefined && data.temperature != undefined) {
-    const dt = new Date().toISOString().replace('T', ' ').substr(0, 19);
-
-    console.log('Storm [@/p/t]: ' + dt + ' / ' +
-      data.pressure.toFixed(1) + 'hPa / ' + data.temperature.toFixed(1) + 'º');
+    console.log('Storm [p/t]: ' + data.pressure.toFixed(1) + 'hPa / ' + data.temperature.toFixed(1) + 'º');
 
     db.run('insert into weather (date, pressure, temperature) values (?, ?, ?)',
         [time(), data.pressure, data.temperature], function(error) {
