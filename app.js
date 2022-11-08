@@ -19,6 +19,8 @@
  *    specific prior written permission.
  */
 
+const { WeatherAlert } = require('r9t-commons');
+
 const mqtt = require('mqtt');
 const sqlite3 = require('sqlite3');
 const express = require('express');
@@ -33,18 +35,6 @@ const port = process.argv.filter((arg) => {
 
 const app = express();
 app.listen(port);
-
-const Alert = {
-  NONE:                0b00000000,
-  POOR:                0b00000001,
-  RAIN:                0b00000010,
-  WIND:                0b00000100,
-  STRONG_WIND:         0b00001000,
-  GALE:                0b00010000,
-  STORM:               0b00100000,
-  FIRESTORM:           0b01000000,
-  SEVERE_THUNDERSTORM: 0b10000000
-}
 
 const data = {
   pressure: undefined,
@@ -184,42 +174,42 @@ const alarm = (delta12h, delta3h, pressure, temperature) => {
   console.log('Pressure: ' + pressure);
   console.log('Temperature: ' + temperature);
 
-  let alert = Alert.NONE;
+  let alert = WeatherAlert.NONE;
 
   // the following rules could be written in a much more efficient way
   // I deliberately chose to write them in the most explicit way
 
   if(delta3h >= 10) {
-    alert |= Alert.GALE;
+    alert |= WeatherAlert.GALE;
   }
   if(delta3h >= 6) {
-    alert |= Alert.STRONG_WIND;
+    alert |= WeatherAlert.STRONG_WIND;
   }
   if(delta3h >= 1.1 && delta3h <= 2.7 && pressure >= 1015) {
-    alert |= Alert.POOR;
+    alert |= WeatherAlert.POOR;
   }
 
   if(delta3h <= -1.1 && delta3h >= -2.7 && pressure <= 1009) {
-    alert |= Alert.RAIN | Alert.WIND;
+    alert |= WeatherAlert.RAIN | WeatherAlert.WIND;
   }
   if(delta3h <= -4 && pressure <= 1009) {
-    alert |= Alert.STORM;
+    alert |= WeatherAlert.STORM;
   }
   if(delta3h <= -4 && pressure > 1009 && pressure <= 1023) {
-    alert |= Alert.RAIN | Alert.WIND;
+    alert |= WeatherAlert.RAIN | WeatherAlert.WIND;
   }
   if(delta3h <= -6 && pressure <= 1009) {
-    alert |= Alert.STORM | Alert.STRONG_WIND;
+    alert |= WeatherAlert.STORM | WeatherAlert.STRONG_WIND;
   }
   if(delta3h <= -7 && pressure <= 990 && temperature >= 40) {
-    alert |= Alert.FIRESTORM;
+    alert |= WeatherAlert.FIRESTORM;
   }
   if(delta3h <= -10 && pressure <= 1009) {
-    alert |= Alert.STORM | Alert.GALE;
+    alert |= WeatherAlert.STORM | WeatherAlert.GALE;
   }
 
   if(delta12h <= -8 && delta3h <= -4 && pressure <= 1005) {
-    alert |= Alert.SEVERE_THUNDERSTORM;
+    alert |= WeatherAlert.SEVERE_THUNDERSTORM;
   }
 
   console.log('Alert: 0b' + alert.toString(2).padStart(8, 0));
