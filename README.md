@@ -9,6 +9,19 @@ Data is collected from the MQTT topics `weather/pressure` and `weather/temperatu
 Whenever there is an alert condition, the service will publish it to the MQTT topic `alarm/weather` which may
 then be handled by other services. Please see the source code for the detailed format of the alert message.
 
+## Barograph
+
+The service will send the last 24 hours of barograph data (4 data points/hour - 15 minute intervals) to the
+MQTT topic `weather/barograph` when requested.
+
+To request barograph data send the message `{ fetch: true }` to the topic `storm/barograph`.
+
+## Endpoints
+
+This service provides the following restful endpoints:
+
+- `/barograph` - returns the last 24 hours of barometric readings (4 data points/hour)
+
 ## Dependencies
 
 Persistent data storage for logging atmospheric pressure and temperature is done on a SQLite database and the
@@ -37,9 +50,3 @@ To start the service run:
 ```
 pm2 start app.js --name storm --watch --time --ignore-watch="weather.*" -- --port=3000
 ```
-
-## Endpoints
-
-This service provides the following restful endpoints:
-
-- `/barograph` - returns the last 24 hours of barometric readings (4 data points/hour)
